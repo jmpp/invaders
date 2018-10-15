@@ -1,37 +1,26 @@
-const aliensMap = [
-    'A','A','A','A','A','A','A','A','A','A','A',
-
-    'B','B','B','B','B','B','B','B','B','B','B',
-    'B','B','B','B','B','B','B','B','B','B','B',
-
-    'C','C','C','C','C','C','C','C','C','C','C',
-    'C','C','C','C','C','C','C','C','C','C','C'
-];
-
 const NB_ALIENS_PER_LINE = 11;
-
-const aliensConfig = {
-    'A' : {
-        points : 40,
-        sprites : [
-            { x:6 , y:3 , w:16 , h:16 },
-            { x:6 , y:25 , w:16 , h:16 }
-        ]
-    },
-    'B' : {
-        points : 20,
-        sprites : [
-            { x:32 , y:3 , w:22 , h:16 },
-            { x:32 , y:25 , w:22 , h:16 }
-        ]
-    },
-    'C' : {
-        points : 10,
-        sprites : [
-            { x:60 , y:3 , w:24 , h:16 },
-            { x:60 , y:25 , w:24 , h:16 }
-        ]
-    },
+const ALIEN_SPACE_X = 35;
+const ALIEN_SPACE_Y = 28;
+const aliensMap = [
+    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+    20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
+    20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 
+];
+const alienSprites = {
+    40 : [
+        { x:6 , y:3  , width:16 , height:16 },
+        { x:6 , y:25 , width:16 , height:16 }
+    ],
+    20 : [
+        { x:32 , y:3  , width:22 , height:16 },
+        { x:32 , y:25 , width:22 , height:16 }
+    ],
+    10 : [
+        { x:60 , y:25 , width:24 , height:16 },
+        { x:60 , y:3  , width:24 , height:16 }
+    ]
 };
 
 function createAliens() {
@@ -42,12 +31,16 @@ function createAliens() {
             line++;
         }
 
+        let alienWidth = alienSprites[ aliensMap[i] ][ 0 ].width;
+        let alienHeight = alienSprites[ aliensMap[i] ][ 0 ].height;
+
         aliens.push({
-            x : 10 + i % NB_ALIENS_PER_LINE * 35,
-            y : 100 + line * 28,
-            points : aliensConfig[ aliensMap[i] ].points,
-            spriteIndex : 0,
-            id : aliensMap[i]
+            x           : 10 + i % NB_ALIENS_PER_LINE * ALIEN_SPACE_X,
+            y           : 100 + line * ALIEN_SPACE_Y,
+            width       : alienWidth,
+            height      : alienHeight,
+            points      : aliensMap[i],
+            spriteIndex : 0
         });
     }
 
@@ -55,27 +48,27 @@ function createAliens() {
 }
 
 function animateAliens() {
-
+    
 }
 
 function renderAliens() {
     for (let i = 0; i < aliens.length; i++) {
         
-        let letter = aliens[i].id;
+        let points      = aliens[i].points;
         let spriteIndex = aliens[i].spriteIndex;
 
         context.drawImage(
             spritesheet,
             
-            aliensConfig[letter].sprites[spriteIndex].x,
-            aliensConfig[letter].sprites[spriteIndex].y,
-            aliensConfig[letter].sprites[spriteIndex].w,
-            aliensConfig[letter].sprites[spriteIndex].h,
+            alienSprites[points][spriteIndex].x,
+            alienSprites[points][spriteIndex].y,
+            alienSprites[points][spriteIndex].width,
+            alienSprites[points][spriteIndex].height,
 
             aliens[i].x,
             aliens[i].y,
-            aliensConfig[letter].sprites[spriteIndex].w,
-            aliensConfig[letter].sprites[spriteIndex].h
+            alienSprites[points][spriteIndex].width,
+            alienSprites[points][spriteIndex].height
         );
     }
 }
