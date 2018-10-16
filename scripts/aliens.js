@@ -8,7 +8,7 @@ const aliensMap = [
     10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
     10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 
 ];
-const alienSprites = {
+const aliensSprites = {
     40 : [
         { x:6 , y:3  , width:16 , height:16 },
         { x:6 , y:25 , width:16 , height:16 }
@@ -23,6 +23,9 @@ const alienSprites = {
     ]
 };
 
+let aliensTimer = 1000; // intervalle de mouvements d'aliens en milli-secondes
+let lastAlienMovement = 0; // instant "t" du dernier déplacement des aliens
+
 function createAliens() {
     const aliens = [];
 
@@ -31,15 +34,18 @@ function createAliens() {
             line++;
         }
 
-        let alienWidth = alienSprites[ aliensMap[i] ][ 0 ].width;
-        let alienHeight = alienSprites[ aliensMap[i] ][ 0 ].height;
+        if (aliensMap[i] === 0) { continue; }
+
+        let alienWidth = aliensSprites[ aliensMap[i] ][ 0 ].width;
+        let alienHeight = aliensSprites[ aliensMap[i] ][ 0 ].height;
 
         aliens.push({
-            x           : 10 + i % NB_ALIENS_PER_LINE * ALIEN_SPACE_X,
+            x           : 12 + i % NB_ALIENS_PER_LINE * ALIEN_SPACE_X,
             y           : 100 + line * ALIEN_SPACE_Y,
             width       : alienWidth,
             height      : alienHeight,
             points      : aliensMap[i],
+            direction   : 1,
             spriteIndex : 0
         });
     }
@@ -48,7 +54,31 @@ function createAliens() {
 }
 
 function animateAliens() {
-    
+
+    // Mouvement des aliens de gauche à droite et vers le bas
+    if (Date.now() - lastAlienMovement > aliensTimer) {
+        lastAlienMovement = Date.now(); // Mise à jour de l'instant du dernier mouvement du joueur à "maintenant"!
+
+        // Récupération du X de l'alien le plus à droite (et à gauche)
+        let extremeRightAlien = Math.max( ...aliens.map(a => a.x) ) + ALIEN_SPACE_X;
+        let extremeLeftAlien = Math.min( ...aliens.map(a => a.x) );
+        
+        // Parcours du tableau d'aliens pour mise à jour
+        for (let i = 0; i < aliens.length; i++) {
+
+            // Si le groupe d'aliens touche un bord de l'écran, chaque alien change sa variable de direction, ainsi que sa position verticale (pour descendre d'un cran)
+            if (extremeRightAlien > canvas.width && aliens[i].direction === 1 ||
+                extremeLeftAlien <= 0 && aliens[i].direction === -1) {
+                aliens[i].direction *= -1;
+                aliens[i].y += 22;
+            }
+            else {
+                aliens[i].x += 12 * aliens[i].direction;
+            }
+
+        }
+    } // -- fin du mouvement des aliens
+
 }
 
 function renderAliens() {
@@ -60,15 +90,15 @@ function renderAliens() {
         context.drawImage(
             spritesheet,
             
-            alienSprites[points][spriteIndex].x,
-            alienSprites[points][spriteIndex].y,
-            alienSprites[points][spriteIndex].width,
-            alienSprites[points][spriteIndex].height,
+            aliensSprites[points][spriteIndex].x,
+            aliensSprites[points][spriteIndex].y,
+            aliensSprites[points][spriteIndex].width,
+            aliensSprites[points][spriteIndex].height,
 
             aliens[i].x,
             aliens[i].y,
-            alienSprites[points][spriteIndex].width,
-            alienSprites[points][spriteIndex].height
+            aliensSprites[points][spriteIndex].width,
+            aliensSprites[points][spriteIndex].height
         );
     }
 }
