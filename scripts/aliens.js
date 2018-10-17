@@ -25,6 +25,7 @@ const aliensSprites = {
 
 let aliensTimer = 1000; // intervalle de mouvements d'aliens en milli-secondes
 let lastAlienMovement = 0; // instant "t" du dernier déplacement des aliens
+let alienExplosions = []; // Tableau qui servira à stocker les sprites d'explosion
 
 function createAliens() {
     const aliens = [];
@@ -94,6 +95,7 @@ function animateAliens() {
                 player.bullet.y > aliens[i].y &&
                 player.bullet.y <= aliens[i].y + aliens[i].height) {
                 // Collision !
+                createExplosion(aliens[i]);
                 // Augmentation du score du joueur
                 player.score += aliens[i].points;
                 player.bullet = null;
@@ -108,7 +110,16 @@ function animateAliens() {
             }
         }
     }
-}
+
+    // Suppression des animations d'explosion ayant dépassé les 100ms
+    for (let i = 0; i < alienExplosions.length; i++) {
+        if (Date.now() - alienExplosions[i].dateCreated > 100) {
+            alienExplosions.splice(i, 1);
+            i--;
+        }
+    }
+
+} // -- fin de la fonction animateAliens()
 
 function renderAliens() {
     for (let i = 0; i < aliens.length; i++) {
@@ -130,4 +141,36 @@ function renderAliens() {
             aliensSprites[points][spriteIndex].height
         );
     }
+
+    // Dessin des explosions
+    for (let i = 0; i < alienExplosions.length; i++) {
+        context.drawImage(
+            spritesheet,
+
+            alienExplosions[i].sprite.x,
+            alienExplosions[i].sprite.y,
+            alienExplosions[i].sprite.width,
+            alienExplosions[i].sprite.height,
+
+            alienExplosions[i].x,
+            alienExplosions[i].y,
+            alienExplosions[i].sprite.width,
+            alienExplosions[i].sprite.height
+        );
+    }
+}
+
+// Fonction qui créé un objet représentant une explosion, à partir d'un alien
+function createExplosion(alien) {
+    alienExplosions.push({
+        x : alien.x,
+        y : alien.y,
+        sprite : {
+            x : 88,
+            y : 25,
+            width : 26,
+            height : 16
+        },
+        dateCreated : Date.now()
+    });
 }
