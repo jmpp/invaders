@@ -48,6 +48,8 @@ function animatePlayer() {
                 color : '#0f0',
                 speed : 9
             };
+            // Son
+            sounds['shoot'].play();
         }
     }
 
