@@ -23,7 +23,8 @@ const aliensSprites = {
     ]
 };
 
-let aliensTimer = 1000; // intervalle de mouvements d'aliens en milli-secondes
+let initial_aliens_speed = 1000;
+let aliensTimer = initial_aliens_speed; // intervalle de mouvements d'aliens en milli-secondes
 let lastAlienMovement = 0; // instant "t" du dernier déplacement des aliens
 let alienExplosions = []; // Tableau qui servira à stocker les sprites d'explosion
 let aliensShots = []; // Tableau qui contiendra la liste des éventuels tirs d'aliens
@@ -132,6 +133,19 @@ function animateAliens() {
                 }
                 // Suppression de l'alien du tableau
                 aliens.splice(i, 1);
+                // Vérification si il reste des aliens
+                if (aliens.length === 0) {
+                    game_mode = MODE_NEW_WAVE;
+                    // Regénération d'une nouvelle vague après 2s
+                    setTimeout(() => {
+                        aliens = createAliens();
+                        initial_aliens_speed -= 50;
+                        aliensTimer = initial_aliens_speed;
+                        player.lives++;
+                        lastAlienMovement = Date.now();
+                        game_mode = MODE_PLAYING;
+                    }, 1000);
+                }
                 break;
             }
         }
