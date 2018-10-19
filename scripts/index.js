@@ -22,6 +22,7 @@ const MODE_PLAYING     = 1;
 const MODE_GAME_OVER   = 2;
 const MODE_PLAYER_DEAD = 3;
 const MODE_NEW_WAVE    = 4;
+const MODE_PAUSE       = 5;
 let game_mode = MODE_PLAYING;
 
 // Chargement de l'image du sprite avant de démarrer le jeu
@@ -36,6 +37,10 @@ spritesheet.onload = function() { // Fonction exécutée lorsque le navigateur a
 };
 
 function update() {
+    if ((Keyboard.P || Keyboard.ECHAP) && Keyboard._tapped) {
+        game_mode = (game_mode === MODE_PAUSE) ? MODE_PLAYING : MODE_PAUSE;
+    }
+
     switch(game_mode) {
     case MODE_PLAYING:
         animatePlayer(); // Fonction qui gère l'animation du joueur
@@ -54,6 +59,10 @@ function render() {
         renderPlayer(); // Dessin du joueur
         renderAliens(); // Dessin du joueur
         break;
+    case MODE_PAUSE:
+        renderPlayer(); // Dessin du joueur
+        renderPause();
+        break;
     case MODE_GAME_OVER:
         renderGameOver(); // Affichage du "game over" à l'écran
         break;
@@ -67,13 +76,14 @@ function gameloop() {
     update();
     render();
 
+    Keyboard._tapped = false;
+
     timer = window.requestAnimationFrame(gameloop);
 }
 
 let go_color = 0;
 let go_size = 0;
 function renderGameOver() {
-
     go_color += 30;
     go_size = 24 - (timer % 4);
 
@@ -85,4 +95,11 @@ function renderGameOver() {
     context.fillStyle = '#fff';
     context.font = 'normal 16px "Press Start 2P", cursive';
     context.fillText('PRESS F5', canvas.width/2, canvas.height/2 + 30);
+}
+
+function renderPause() {
+    context.textAlign = 'center';
+    context.fillStyle = '#0f0';
+    context.font = 'normal 20px "Press Start 2P", cursive';
+    context.fillText('PAUSE', canvas.width/2, canvas.height/2);
 }
