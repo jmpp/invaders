@@ -49,6 +49,7 @@ function animatePlayer() {
                 speed : 9
             };
             // Son
+            sounds['shoot'].currentTime = 0;
             sounds['shoot'].play();
         }
     }

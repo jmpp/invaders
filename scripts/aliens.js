@@ -265,6 +265,7 @@ function createExplosion(alien) {
 
 function createAlienShot(alien) {
     // Son
+    sounds['shoot'].currentTime = 0;
     sounds['shoot'].play();
     // Ajout d'un shot alien dans le tableau correspondant
     aliensShots.push({
