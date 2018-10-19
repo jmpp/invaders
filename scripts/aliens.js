@@ -23,7 +23,7 @@ const aliensSprites = {
     ]
 };
 
-let aliensTimer = 1000; // intervalle de mouvements d'aliens en milli-secondes
+let aliensTimer = 100; // intervalle de mouvements d'aliens en milli-secondes
 let lastAlienMovement = 0; // instant "t" du dernier déplacement des aliens
 let alienExplosions = []; // Tableau qui servira à stocker les sprites d'explosion
 let alienSoundNb = 1; // numéro de son de l'alien (variera de 1 à 4, en boucle)
@@ -68,6 +68,15 @@ function animateAliens() {
             }
         */
         sounds['invader' + (alienSoundNb++ % 4 + 1)].play();
+
+        // Vérification si un des aliens du groupe a atteint le joueur
+        // Pour cela, récupération des coordonnées de l'alien le plus bas dans le groupe
+        let extremeDownAlien = Math.max( ...aliens.map(a => a.y) );
+        if (extremeDownAlien + 16 >= player.y) {
+            player.lives = 0;
+            sounds['player_death'].play();
+            game_mode = MODE_GAME_OVER;
+        }
 
         // Récupération du X de l'alien le plus à droite (et à gauche)
         let extremeRightAlien = Math.max( ...aliens.map(a => a.x) ) + ALIEN_SPACE_X;
