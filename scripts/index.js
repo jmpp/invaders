@@ -17,6 +17,8 @@ const sounds = {
     shoot          : document.getElementById('shoot'),
     player_death   : document.getElementById('player_death')
 };
+// Récupération du "high score" dans les données locales stockées du navigateur (JavaScript Local Storage API)
+let highScore = parseInt(window.localStorage.getItem('invaders_high_score'), 10) || 0;
 
 const MODE_PLAYING     = 1;
 const MODE_GAME_OVER   = 2;
@@ -81,17 +83,40 @@ function gameloop() {
     timer = window.requestAnimationFrame(gameloop);
 }
 
+// Permet de définir le mode game over et tout ce qui suit
+function setGameOver() {
+    // Mise en mode game over
+    game_mode = MODE_GAME_OVER;
+    player.lives = 0;
+    sounds['player_death'].play();
+
+    // Si au cours de cette partie, le joueur a fait un meilleur score que le high score, on met à jour dans le stockage navigateur
+    if (player.score > highScore) {
+        highScore = player.score;
+        window.localStorage.setItem('invaders_high_score', player.score);
+    }
+}
+
 let go_color = 0;
 let go_size = 0;
 function renderGameOver() {
-    go_color += 30;
-    go_size = 24 - (timer % 4);
+    
+    // Affichage du texte clignotant uniquement si on a fait un "high score" !
+    if (player.score === highScore) {
+        go_color += 30;
+        go_size = 24 - (timer % 4);
 
+        context.textAlign = 'center';
+        context.fillStyle = 'hsl('+ go_color +', 100%, 50%)';
+        context.font = 'normal '+ go_size +'px "Press Start 2P", cursive';
+        context.fillText('NEW HIGH SCORE!!!', canvas.width/2, canvas.height/2 - 40);
+    }
+    
     context.textAlign = 'center';
-    context.fillStyle = 'hsl('+ go_color +', 100%, 50%)';
-    context.font = 'normal '+ go_size +'px "Press Start 2P", cursive';
+    context.fillStyle = '#0f0';
+    context.font = 'normal 24px "Press Start 2P", cursive';
     context.fillText('GAME OVER', canvas.width/2, canvas.height/2);
-
+    
     context.fillStyle = '#fff';
     context.font = 'normal 16px "Press Start 2P", cursive';
     context.fillText('PRESS F5', canvas.width/2, canvas.height/2 + 30);
@@ -101,5 +126,10 @@ function renderPause() {
     context.textAlign = 'center';
     context.fillStyle = '#0f0';
     context.font = 'normal 20px "Press Start 2P", cursive';
-    context.fillText('PAUSE', canvas.width/2, canvas.height/2);
+    context.fillText('- PAUSE -', canvas.width/2, canvas.height/2);
+
+    // Affichage du "high score" dans le menu pause
+    context.fillStyle = '#fff';
+    context.font = 'normal 16px "Press Start 2P", cursive';
+    context.fillText('High Score: ' + highScore + ' pts', canvas.width/2, canvas.height/2 + 30);
 }

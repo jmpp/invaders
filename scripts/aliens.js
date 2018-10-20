@@ -76,9 +76,8 @@ function animateAliens() {
         // Pour cela, récupération des coordonnées de l'alien le plus bas dans le groupe
         let extremeDownAlien = Math.max( ...aliens.map(a => a.y) );
         if (extremeDownAlien + 16 >= player.y) {
-            player.lives = 0;
-            sounds['player_death'].play();
-            game_mode = MODE_GAME_OVER;
+            setGameOver();
+            return;
         }
 
         // Récupération du X de l'alien le plus à droite (et à gauche)
@@ -179,8 +178,8 @@ function animateAliens() {
 
             // Plus de vies ?
             if (player.lives === 0) {
-                game_mode = MODE_GAME_OVER;
-                break;
+                setGameOver();
+                return;
             }
 
             // Suppression des tirs alien en cours, et du shoot player
