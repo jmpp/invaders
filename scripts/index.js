@@ -40,7 +40,12 @@ spritesheet.onload = function() { // Fonction exécutée lorsque le navigateur a
 
 function update() {
     if ((Keyboard.P || Keyboard.ECHAP) && Keyboard._tapped) {
-        game_mode = (game_mode === MODE_PAUSE) ? MODE_PLAYING : MODE_PAUSE;
+        if (game_mode === MODE_PAUSE) {
+            game_mode = MODE_PLAYING;
+        }
+        else if (game_mode === MODE_PLAYING) {
+            game_mode = MODE_PAUSE;
+        }
     }
 
     switch(game_mode) {
