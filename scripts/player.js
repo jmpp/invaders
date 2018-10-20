@@ -66,6 +66,11 @@ function animatePlayer() {
 }
 
 function renderPlayer() {
+
+    // Permet de faire clignoter le vaisseau du joueur si on est en mode "PLAYER_DEAD"
+    if (game_mode === MODE_PLAYER_DEAD && timer % 6 < 3)
+        return;
+
     // Dessin du joueur à ses coordonnées
     context.drawImage(
         player.sprite.img,
