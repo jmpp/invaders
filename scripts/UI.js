@@ -13,4 +13,11 @@ function renderUI() {
     context.moveTo(20, canvas.height - 40);
     context.lineTo(canvas.width - 20, canvas.height - 40);
     context.stroke();
+
+    // Indication pour mettre en pause
+
+    context.fillStyle = '#c0c0c0';
+    context.textAlign = 'right';
+    context.font = 'normal 14px "Press Start 2P", cursive';
+    context.fillText('P = "pause"', canvas.width - 20, canvas.height - 12);
 }
